@@ -179,6 +179,8 @@ Distributed under the MIT License.
 ## Contact
 
 Abyan - [GitHub Profile](https://github.com/AbyanDv)
+Zeehza - [GitHub Profile](https://github.com/FahrizaSalam)
+Rosyid - [GitHub Profile](https://github.com/justdotzy69)
 
 Project Link: [https://github.com/AbyanDv/SmartKas-Kelontong](https://github.com/AbyanDv/SmartKas-Kelontong)
 
