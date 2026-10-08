@@ -9,13 +9,13 @@
 
 ---
 
-## 📌 Informasi Kelompok
+## Informasi Kelompok
 - **Nomor Kelompok:** 3
 - **Shift Praktikum:** B
 
 ---
 
-## 👥 Anggota Kelompok
+## Anggota Kelompok
 
 | No | Nama Lengkap | NIM | Shift Awal | Shift Akhir | Jobdesk / Kontribusi | Link Video Penjelasan |
 |---|---|---|---|---|---|---|
@@ -25,7 +25,7 @@
 
 ---
 
-## 📖 Deskripsi Aplikasi
+## Deskripsi Aplikasi
 SmartKas adalah aplikasi berbasis REST API untuk mengelola uang kas/iuran secara terpusat dan transparan. Aplikasi ini dibuat untuk membantu bendahara dalam menagih, mencatat, dan memverifikasi pembayaran (termasuk pembayaran via QRIS), serta memberi anggota akses untuk melihat status tagihan dan catatan kas.
 
 - **Target pengguna:** Ketua/Bendahara (Admin) dan anggota (Member) organisasi, kelas, atau komunitas.
@@ -33,7 +33,7 @@ SmartKas adalah aplikasi berbasis REST API untuk mengelola uang kas/iuran secara
 
 ---
 
-## ⚙️ Penjelasan Teknis
+## Penjelasan Teknis
 
 ### 1. Teknologi (Tech Stack)
 - **Backend:** Laravel 13 (PHP >= 8.3), diakses sebagai REST API (uji dengan Postman/Insomnia)
@@ -73,7 +73,7 @@ SmartKas adalah aplikasi berbasis REST API untuk mengelola uang kas/iuran secara
 
 ---
 
-## 🚀 Panduan Instalasi Lokal
+## Panduan Instalasi Lokal
 
 **Prasyarat:** PHP >= 8.3, Composer, MySQL, Node.js & npm.
 
@@ -111,7 +111,7 @@ DB_PASSWORD=
 
 ---
 
-## 📬 Kontak & Lisensi
+## Kontak & Lisensi
 - Abyan - [GitHub](https://github.com/AbyanDv)
 - Aziz - [GitHub](https://github.com/FahrizaSalam)
 - Rosyid - [GitHub](https://github.com/justdotzy69)
