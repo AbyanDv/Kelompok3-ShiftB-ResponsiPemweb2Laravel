@@ -6,7 +6,7 @@
     <h1 class="section-title h4 mb-4">Tagihan</h1>
 
     <div class="row g-3 mb-4">
-        @include('components.stat', ['label' => 'Terkumpul', 'value' => 'Rp '.number_format($summary['collected'], 0, ',', '.')])
+        @include('components.stat', ['label' => 'Terkumpul', 'value' => $summary['collected'], 'rupiah' => true])
         @include('components.stat', ['label' => 'Lunas', 'value' => $summary['paid']])
         @include('components.stat', ['label' => 'Belum bayar', 'value' => $summary['unpaid']])
     </div>
@@ -49,7 +49,7 @@
                                     <div class="text-muted small">{{ $bill->user->nim ?? '' }}</div>
                                 </td>
                                 <td class="small text-muted">{{ $bill->kasType->name ?? '' }}</td>
-                                <td class="text-end small">Rp {{ number_format($bill->amount, 0, ',', '.') }}</td>
+                                <td class="text-end small">@rupiah($bill->amount)</td>
                                 <td class="text-end"><span class="badge text-bg-light border">{{ $bill->status }}</span></td>
                                 <td class="text-end">
                                     @if ($bill->status === 'unpaid' && $bill->kasType?->is_active)

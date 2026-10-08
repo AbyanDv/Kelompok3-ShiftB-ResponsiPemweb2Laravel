@@ -8,6 +8,7 @@ use App\Http\Resources\BillResource;
 use App\Models\Bill;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BillController extends Controller
 {
@@ -70,7 +71,7 @@ class BillController extends Controller
             ], 409);
         }
 
-        \Illuminate\Support\Facades\DB::transaction(function () use ($bill) {
+        DB::transaction(function () use ($bill) {
             $bill->payments()->where('status', 'pending')->update(['status' => 'cancelled']);
             $bill->update(['status' => 'cancelled']);
         });

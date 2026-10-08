@@ -4,20 +4,12 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 class SmartKasFondasiTest extends TestCase
 {
     use RefreshDatabase;
-
-    private function admin(): User
-    {
-        return User::factory()->create([
-            'nim' => 'ADM001',
-            'role' => 'admin',
-            'status' => 'verified',
-        ]);
-    }
 
     public function test_register_pending_dan_role_tidak_bisa_diisi(): void
     {
@@ -116,6 +108,6 @@ class SmartKasFondasiTest extends TestCase
     public function test_command_bawaan_tetap_ada(): void
     {
         $this->artisan('inspire')->assertOk();
-        $this->assertTrue(\Illuminate\Support\Facades\Route::has('users.index'));
+        $this->assertTrue(Route::has('users.index'));
     }
 }

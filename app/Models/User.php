@@ -43,6 +43,11 @@ class User extends Authenticatable
         return $this->status === 'verified' || $this->isAdmin();
     }
 
+    public function scopeVerifiedMember($query)
+    {
+        return $query->where('role', 'member')->where('status', 'verified');
+    }
+
     public function bills(): HasMany
     {
         return $this->hasMany(Bill::class);

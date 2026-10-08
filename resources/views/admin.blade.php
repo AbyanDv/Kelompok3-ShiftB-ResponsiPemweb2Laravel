@@ -49,7 +49,7 @@
                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 py-2 border-bottom">
                     <div class="small">
                         <span class="fw-semibold">{{ $kas->name }}</span>
-                        <span class="text-muted">· Rp {{ number_format($kas->amount, 0, ',', '.') }} · {{ $kas->bills_count }} tagihan · {{ $kas->is_active ? 'aktif' : 'nonaktif' }}</span>
+                        <span class="text-muted">· @rupiah($kas->amount) · {{ $kas->bills_count }} tagihan · {{ $kas->is_active ? 'aktif' : 'nonaktif' }}</span>
                     </div>
                     <div class="d-flex gap-2">
                         <form method="POST" action="{{ route('admin.kas.update', $kas) }}" class="m-0">

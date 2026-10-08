@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Services\DiscordReminder;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use App\Services\DiscordReminder;
 
 #[Signature('reminders:send')]
 #[Description('Kirim pengingat tagihan belum bayar ke Discord')]

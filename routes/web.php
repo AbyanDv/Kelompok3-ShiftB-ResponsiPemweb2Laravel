@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\KasType\StoreKasTypeRequest;
+use App\Http\Requests\Payment\ManualPaymentRequest;
 use App\Models\Bill;
 use App\Models\KasType;
 use App\Models\Payment;
@@ -27,11 +31,8 @@ $ownPayment = function (Request $request, Payment $payment): void {
 Route::get('/', fn () => view('welcome'))->name('home');
 
 Route::get('/masuk', fn () => Auth::check() ? redirect()->route('beranda') : view('auth.login'))->name('login');
-Route::post('/masuk', function (Request $request) {
-    $data = $request->validate([
-        'nim' => ['required', 'string'],
-        'password' => ['required', 'string'],
-    ]);
+Route::post('/masuk', function (LoginRequest $request) {
+    $data = $request->validated();
 
     if (! Auth::attempt(['nim' => $data['nim'], 'password' => $data['password']], $request->boolean('remember'))) {
         return back()->withErrors(['nim' => 'NIM atau kata sandi salah.'])->withInput();
@@ -43,12 +44,8 @@ Route::post('/masuk', function (Request $request) {
 });
 
 Route::get('/daftar', fn () => Auth::check() ? redirect()->route('beranda') : view('auth.register'))->name('register');
-Route::post('/daftar', function (Request $request) {
-    $data = $request->validate([
-        'nim' => ['required', 'string', 'max:30', 'unique:users,nim'],
-        'name' => ['required', 'string', 'max:255'],
-        'password' => ['required', 'string', 'min:8', 'confirmed'],
-    ]);
+Route::post('/daftar', function (RegisterRequest $request) {
+    $data = $request->validated();
 
     Auth::login(User::create([
         'nim' => $data['nim'],
@@ -65,8 +62,8 @@ Route::post('/daftar', function (Request $request) {
 
 Route::get('/beranda', function (Request $request) {
     return view('beranda', [
-        'stats' => Bill::summary() + ['members' => User::where('role', 'member')->where('status', 'verified')->count()],
-        'kasTypes' => KasType::where('is_active', true)->latest()->take(5)->get(),
+        'stats' => Bill::summary() + ['members' => User::verifiedMember()->count()],
+        'kasTypes' => KasType::active()->latest()->take(5)->get(),
         'recentBills' => Bill::with(['user', 'kasType'])->latest()->take(5)->get(),
         'myBills' => $request->user()
             ? Bill::with('kasType')->where('user_id', $request->user()->id)->where('status', 'unpaid')->latest()->take(5)->get()
@@ -102,14 +99,6 @@ Route::middleware('auth')->group(function () use ($admin, $ownBill, $ownPayment)
 
     Route::post('/bayar/{bill}', function (Request $request, Bill $bill) use ($ownBill) {
         $ownBill($request, $bill);
-
-        if ($bill->status === 'paid') {
-            return back()->with('status', 'Tagihan sudah lunas.');
-        }
-
-        if ($bill->status === 'cancelled') {
-            return back()->withErrors(['bill' => 'Tagihan sudah dibatalkan.']);
-        }
 
         try {
             [$payment, $baru] = PaymentService::createPendingCharge($bill, app(PaymentGateway::class));
@@ -149,9 +138,9 @@ Route::middleware('auth')->group(function () use ($admin, $ownBill, $ownPayment)
     })->name('bayar.cancel');
 
     Route::prefix('admin')->name('admin.')->group(function () use ($admin) {
-        Route::post('/bills/{bill}/tunai', function (Request $request, Bill $bill) use ($admin) {
+        Route::post('/bills/{bill}/tunai', function (ManualPaymentRequest $request, Bill $bill) use ($admin) {
             $admin($request);
-            $data = $request->validate(['note' => ['nullable', 'string', 'max:1000']]);
+            $data = $request->validated();
 
             try {
                 PaymentService::recordCash($bill, $request->user(), $data['note'] ?? null);
@@ -182,13 +171,9 @@ Route::middleware('auth')->group(function () use ($admin, $ownBill, $ownPayment)
             return back()->with('status', $user->name.' ditolak.');
         })->name('users.reject');
 
-        Route::post('/kas', function (Request $request) use ($admin) {
+        Route::post('/kas', function (StoreKasTypeRequest $request) use ($admin) {
             $admin($request);
-            $data = $request->validate([
-                'name' => ['required', 'string', 'max:255'],
-                'amount' => ['required', 'integer', 'min:1'],
-                'due_date' => ['required', 'date'],
-            ]);
+            $data = $request->validated();
 
             $kas = null;
             $n = DB::transaction(function () use ($request, $data, &$kas) {

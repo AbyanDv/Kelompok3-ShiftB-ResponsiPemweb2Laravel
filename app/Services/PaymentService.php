@@ -65,21 +65,30 @@ class PaymentService
         });
     }
 
+    /** Tolak bila tagihan tak bisa dibayar. Dipakai semua jalur bayar. */
+    private static function assertPayable(Bill $bill): void
+    {
+        if ($bill->status === 'paid') {
+            abort(409, 'Tagihan sudah lunas.');
+        }
+
+        if ($bill->status === 'cancelled') {
+            abort(409, 'Tagihan sudah dibatalkan.');
+        }
+
+        $bill->loadMissing('kasType');
+
+        if ($bill->kasType && ! $bill->kasType->is_active) {
+            abort(409, 'Paket kas sudah nonaktif. Tidak bisa dibayar.');
+        }
+    }
+
     /** Catat tunai admin: buat payment + lunaskan. Sama dipakai API + web. */
     public static function recordCash(Bill $bill, User $recorder, ?string $note = null): Payment
     {
         return DB::transaction(function () use ($bill, $recorder, $note) {
             $bill = Bill::whereKey($bill->id)->lockForUpdate()->firstOrFail();
-
-            if ($bill->status !== 'unpaid') {
-                abort(409, 'Tagihan sudah lunas atau dibatalkan.');
-            }
-
-            $bill->loadMissing('kasType');
-
-            if ($bill->kasType && ! $bill->kasType->is_active) {
-                abort(409, 'Paket kas sudah nonaktif. Tidak bisa dibayar.');
-            }
+            self::assertPayable($bill);
 
             $created = $bill->payments()->create([
                 'order_id' => 'CASH-'.$bill->id.'-'.Str::upper(Str::random(8)),
@@ -99,11 +108,7 @@ class PaymentService
     /** Buat charge QRIS pending, atau kembalikan yang masih berlaku. Return [payment, baru?]. */
     public static function createPendingCharge(Bill $bill, PaymentGateway $gateway, string $prefix = 'SK-'): array
     {
-        $bill->loadMissing('kasType');
-
-        if ($bill->kasType && ! $bill->kasType->is_active) {
-            abort(409, 'Paket kas sudah nonaktif. Tidak bisa dibayar.');
-        }
+        self::assertPayable($bill);
 
         $existing = $bill->payments()
             ->where('status', 'pending')
@@ -137,7 +142,7 @@ class PaymentService
     public static function issueBillsForUser(User $user): int
     {
         $n = 0;
-        KasType::where('is_active', true)->get(['id', 'amount'])->each(function ($kas) use ($user, &$n) {
+        KasType::active()->get(['id', 'amount'])->each(function ($kas) use ($user, &$n) {
             $bill = Bill::firstOrCreate(
                 ['user_id' => $user->id, 'kas_type_id' => $kas->id],
                 ['amount' => $kas->amount]
@@ -154,7 +159,7 @@ class PaymentService
     public static function issueBillsForKas(KasType $kas): int
     {
         $n = 0;
-        User::where('role', 'member')->where('status', 'verified')->chunkById(100, function ($users) use ($kas, &$n) {
+        User::verifiedMember()->chunkById(100, function ($users) use ($kas, &$n) {
             foreach ($users as $u) {
                 $bill = Bill::firstOrCreate(
                     ['user_id' => $u->id, 'kas_type_id' => $kas->id],

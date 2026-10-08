@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Bill;
 use App\Models\KasType;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -21,7 +20,7 @@ class WebBayarFlowTest extends TestCase
 
     public function test_alur_kas_sampai_lunas(): void
     {
-        $member = User::factory()->create(['role' => 'member', 'status' => 'verified']);
+        $member = $this->member();
         $bill = $this->tagihan($member);
 
         // 1. tabel kas ada tombol bayar + link halaman bayar
@@ -57,8 +56,8 @@ class WebBayarFlowTest extends TestCase
 
     public function test_paket_nonaktif_tidak_bisa_bayar(): void
     {
-        $member = User::factory()->create(['role' => 'member', 'status' => 'verified']);
-        $admin = User::factory()->create(['role' => 'admin', 'status' => 'verified']);
+        $member = $this->member();
+        $admin = $this->admin('ADM002');
         $kas = KasType::create([
             'name' => 'Kas Mati', 'amount' => 10000,
             'due_date' => now()->addMonth()->toDateString(),
@@ -80,18 +79,5 @@ class WebBayarFlowTest extends TestCase
     {
         $this->tagihan();
         $this->get(route('kas'))->assertOk();
-    }
-
-    private function tagihan(?User $member = null): Bill
-    {
-        $member ??= User::factory()->create(['role' => 'member', 'status' => 'verified']);
-        $admin = User::factory()->create(['role' => 'admin', 'status' => 'verified']);
-        $kas = KasType::create([
-            'name' => 'Kas Uji', 'amount' => 10000,
-            'due_date' => now()->addMonth()->toDateString(),
-            'is_active' => true, 'created_by' => $admin->id,
-        ]);
-
-        return Bill::create(['user_id' => $member->id, 'kas_type_id' => $kas->id, 'amount' => 10000]);
     }
 }

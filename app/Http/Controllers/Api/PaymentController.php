@@ -70,20 +70,6 @@ class PaymentController extends Controller
             ], 403);
         }
 
-        if ($bill->status === 'paid') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Tagihan sudah lunas.',
-            ], 409);
-        }
-
-        if ($bill->status === 'cancelled') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Tagihan sudah dibatalkan.',
-            ], 409);
-        }
-
         [$payment, $baru] = PaymentService::createPendingCharge($bill, $this->gateway());
 
         if (! $baru) {

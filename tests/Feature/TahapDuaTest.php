@@ -3,33 +3,17 @@
 namespace Tests\Feature;
 
 use App\Models\Bill;
-use App\Models\KasType;
+use App\Models\LedgerEntry;
+use App\Models\Payment;
 use App\Models\User;
+use App\Services\SandboxPaymentGateway;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class TahapDuaTest extends TestCase
 {
     use RefreshDatabase;
-
-    private function admin(): User
-    {
-        return User::factory()->create(['nim' => 'ADM001', 'role' => 'admin', 'status' => 'verified']);
-    }
-
-    private function member(string $nim = 'H1H024001'): User
-    {
-        return User::factory()->create(['nim' => $nim, 'role' => 'member', 'status' => 'verified']);
-    }
-
-    private function paket(User $admin, int $amount = 10000): KasType
-    {
-        return KasType::create([
-            'name' => 'Kas Uji', 'amount' => $amount,
-            'due_date' => now()->addMonth()->toDateString(),
-            'is_active' => true, 'created_by' => $admin->id,
-        ]);
-    }
 
     public function test_buat_paket_menerbitkan_tagihan(): void
     {
@@ -136,7 +120,7 @@ class TahapDuaTest extends TestCase
         $bill = Bill::create(['user_id' => $member->id, 'kas_type_id' => $kas->id, 'amount' => 10000]);
         $this->actingAs($admin, 'sanctum')->postJson("/api/bills/{$bill->id}/manual-payments");
 
-        $entryId = \App\Models\LedgerEntry::whereNotNull('payment_id')->first()->id;
+        $entryId = LedgerEntry::whereNotNull('payment_id')->first()->id;
 
         $this->actingAs($admin, 'sanctum')
             ->putJson("/api/ledger-entries/{$entryId}", ['amount' => 1])
@@ -167,7 +151,7 @@ class TahapDuaTest extends TestCase
         $orderId = $pay->json('data.order_id');
         $total = $pay->json('data.total_amount');
 
-        $gateway = new \App\Services\SandboxPaymentGateway();
+        $gateway = new SandboxPaymentGateway;
         $payload = ['order_id' => $orderId, 'status' => 'paid', 'total_amount' => $total];
         $sig = $gateway->signWebhook($payload);
 
@@ -176,7 +160,7 @@ class TahapDuaTest extends TestCase
 
         // kirim ulang -> tetap satu pemasukan (idempoten)
         $this->postJson('/api/webhooks/payment', $payload, ['X-Signature' => $sig])->assertOk();
-        $this->assertEquals(1, \App\Models\LedgerEntry::where('type', 'income')->count());
+        $this->assertEquals(1, LedgerEntry::where('type', 'income')->count());
 
         // signature palsu
         $this->postJson('/api/webhooks/payment', $payload, ['X-Signature' => 'palsu'])
@@ -231,15 +215,15 @@ class TahapDuaTest extends TestCase
         $total = $pay->json('data.total_amount');
 
         $this->actingAs($admin, 'sanctum')->deleteJson("/api/bills/{$bill->id}")->assertOk();
-        $this->assertEquals('cancelled', \App\Models\Payment::where('order_id', $orderId)->first()->status);
+        $this->assertEquals('cancelled', Payment::where('order_id', $orderId)->first()->status);
 
-        $gateway = new \App\Services\SandboxPaymentGateway();
+        $gateway = new SandboxPaymentGateway;
         $payload = ['order_id' => $orderId, 'status' => 'paid', 'total_amount' => $total];
         $this->postJson('/api/webhooks/payment', $payload, ['X-Signature' => $gateway->signWebhook($payload)])
             ->assertStatus(422);
 
         $this->assertEquals('cancelled', $bill->fresh()->status);
-        $this->assertEquals(0, \App\Models\LedgerEntry::where('type', 'income')->count());
+        $this->assertEquals(0, LedgerEntry::where('type', 'income')->count());
     }
 
     public function test_verifikasi_menerbitkan_tagihan_aktif(): void
@@ -258,7 +242,7 @@ class TahapDuaTest extends TestCase
     public function test_discord_gagal_tidak_ngaku_terkirim(): void
     {
         config()->set('services.discord.webhook_url', 'https://discord.test/hook');
-        \Illuminate\Support\Facades\Http::fake(['*' => \Illuminate\Support\Facades\Http::response('err', 500)]);
+        Http::fake(['*' => Http::response('err', 500)]);
 
         $admin = $this->admin();
         $member = $this->member();

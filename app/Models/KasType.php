@@ -16,6 +16,11 @@ class KasType extends Model
         return ['due_date' => 'date', 'is_active' => 'boolean'];
     }
 
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
     public function bills(): HasMany
     {
         return $this->hasMany(Bill::class);

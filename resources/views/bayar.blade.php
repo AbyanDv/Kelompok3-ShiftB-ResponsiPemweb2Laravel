@@ -21,7 +21,7 @@
                         <span class="text-muted small">{{ $bill->user->name ?? '' }} · {{ $bill->user->nim ?? '' }}</span>
                         <span class="badge text-bg-light border">{{ $bill->status }}</span>
                     </div>
-                    <p class="h4 fw-semibold mb-1">Rp {{ number_format($bill->amount, 0, ',', '.') }}</p>
+                    <p class="h4 fw-semibold mb-1">@rupiah($bill->amount)</p>
                     <p class="text-muted small mb-0">Jatuh tempo: {{ $bill->kasType->due_date?->format('d M Y') ?? '-' }}</p>
                 </div>
             </div>
@@ -31,7 +31,7 @@
                     <div class="card-body p-4">
                         <h2 class="h6 fw-semibold mb-2">Menunggu pembayaran</h2>
                         <p class="small text-muted mb-1">Order: {{ $pending->order_id }}</p>
-                        <p class="small text-muted mb-1">Total: Rp {{ number_format($pending->total_amount, 0, ',', '.') }}</p>
+                        <p class="small text-muted mb-1">Total: @rupiah($pending->total_amount)</p>
                         <p class="small text-muted mb-3">Kedaluarsa: {{ $pending->expires_at?->format('d M Y H:i') }}</p>
                         @if ($pending->qr_string)
                             <p class="small mb-2"><span class="text-muted">QR:</span> {{ $pending->qr_string }}</p>
@@ -104,7 +104,7 @@
                             <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
                                 <div class="small">
                                     <span class="fw-semibold">{{ $pay->order_id }}</span>
-                                    <span class="text-muted">· {{ $pay->channel }} · Rp {{ number_format($pay->total_amount, 0, ',', '.') }}</span>
+                                    <span class="text-muted">· {{ $pay->channel }} · @rupiah($pay->total_amount)</span>
                                 </div>
                                 <span class="badge text-bg-light border">{{ $pay->status }}</span>
                             </div>
