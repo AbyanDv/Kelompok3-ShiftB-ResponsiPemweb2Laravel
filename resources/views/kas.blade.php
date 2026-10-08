@@ -9,6 +9,8 @@
         @include('components.stat', ['label' => 'Terkumpul', 'value' => $summary['collected'], 'rupiah' => true])
         @include('components.stat', ['label' => 'Lunas', 'value' => $summary['paid']])
         @include('components.stat', ['label' => 'Belum bayar', 'value' => $summary['unpaid']])
+        @include('components.stat', ['label' => 'Pengeluaran', 'value' => $cash['expense'], 'rupiah' => true])
+        @include('components.stat', ['label' => 'Saldo bersih', 'value' => $cash['balance'], 'rupiah' => true])
     </div>
 
     <div class="card rounded-4">

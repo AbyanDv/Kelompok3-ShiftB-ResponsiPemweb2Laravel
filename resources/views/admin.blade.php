@@ -44,6 +44,40 @@
 
     <div class="card rounded-4 mb-3">
         <div class="card-body p-4">
+            <h2 class="h6 fw-semibold mb-3">Catat pengeluaran</h2>
+            <form method="POST" action="{{ route('admin.ledger.store') }}" class="row g-2">
+                @csrf
+                <input type="hidden" name="type" value="expense">
+                <input type="hidden" name="category" value="pengeluaran">
+                <div class="col-md-3">
+                    <input type="number" name="amount" class="form-control form-control-sm" placeholder="Nominal" min="1" value="{{ old('amount') }}" required>
+                </div>
+                <div class="col-md-3">
+                    <input type="date" name="entry_date" class="form-control form-control-sm" value="{{ old('entry_date', date('Y-m-d')) }}" required>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" name="description" class="form-control form-control-sm" placeholder="Keterangan" value="{{ old('description') }}">
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-primary btn-cta btn-sm">Catat</button>
+                </div>
+            </form>
+            @forelse ($recentExpenses as $exp)
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 py-2 border-bottom">
+                    <div class="small">
+                        <span class="fw-semibold">{{ $exp->description ?: 'Pengeluaran' }}</span>
+                        <span class="text-muted">· {{ $exp->entry_date?->format('d M Y') }}</span>
+                    </div>
+                    <span class="small">@rupiah($exp->amount)</span>
+                </div>
+            @empty
+                <p class="text-muted small mb-0 mt-3">Belum ada pengeluaran.</p>
+            @endforelse
+        </div>
+    </div>
+
+    <div class="card rounded-4 mb-3">
+        <div class="card-body p-4">
             <h2 class="h6 fw-semibold mb-3">Paket kas</h2>
             @forelse ($kasTypes as $kas)
                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 py-2 border-bottom">

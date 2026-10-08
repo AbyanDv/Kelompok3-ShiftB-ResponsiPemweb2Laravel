@@ -28,4 +28,13 @@ class LedgerEntry extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    /** Ringkasan dipakai beranda + kas web + API. Satu tempat, cegah drift. */
+    public static function summary(): array
+    {
+        $income = (int) static::where('type', 'income')->sum('amount');
+        $expense = (int) static::where('type', 'expense')->sum('amount');
+
+        return ['income' => $income, 'expense' => $expense, 'balance' => $income - $expense];
+    }
 }

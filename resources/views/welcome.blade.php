@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="SmartKas membantu mencatat, mengelola, dan menganalisis arus kas secara real-time.">
     <title>SmartKas - Modern Cash Management</title>
-    @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-white text-dark">
@@ -18,7 +17,7 @@
             @if (Route::has('login'))
                 <div class="d-flex align-items-center gap-3">
                     @auth
-                        <a href="{{ url('/dashboard') }}" class="btn btn-outline-dark btn-cta">Dashboard</a>
+                        <a href="{{ url('/beranda') }}" class="btn btn-outline-dark btn-cta">Dashboard</a>
                     @else
                         <a href="{{ route('login') }}" class="nav-link p-0">Masuk</a>
                         @if (Route::has('register'))
@@ -36,7 +35,6 @@
             <div class="container">
                 <div class="row align-items-center g-5">
                     <div class="col-lg-6">
-                        <div class="section-divider"></div>
                         <h1 class="hero-title mb-4 text-balance">
                             Kelola keuangan bisnis dengan lebih cerdas
                         </h1>
@@ -88,7 +86,6 @@
         <section id="features" class="py-5" style="scroll-margin-top: 5rem;">
             <div class="container py-lg-4">
                 <div class="text-center mb-5">
-                    <div class="section-divider mx-auto"></div>
                     <h2 class="section-title mb-3">Fitur unggulan</h2>
                     <p class="text-muted mx-auto mb-0" style="max-width: 480px;">
                         Semua yang Anda butuhkan untuk mengelola keuangan bisnis dalam satu platform.
@@ -169,7 +166,6 @@
             <div class="container py-lg-4">
                 <div class="row justify-content-center">
                     <div class="col-lg-8 text-center">
-                        <div class="section-divider mx-auto"></div>
                         <h2 class="section-title mb-3">Siap memulai?</h2>
                         <p class="text-muted mb-4 mx-auto" style="max-width: 480px;">
                             Bergabung dengan ratusan pengguna yang sudah memakai SmartKas untuk mengelola keuangan mereka.

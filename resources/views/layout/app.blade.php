@@ -12,7 +12,6 @@
     <meta property="og:url" content="{{ url('/') }}">
     <meta name="theme-color" content="#111111">
 
-    @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="d-flex flex-column min-vh-100">

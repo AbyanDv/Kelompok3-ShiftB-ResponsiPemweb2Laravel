@@ -35,6 +35,8 @@
         @include('components.stat', ['wrap' => 'col-6 col-md-3', 'label' => 'Belum bayar', 'value' => $stats['unpaid']])
         @include('components.stat', ['wrap' => 'col-6 col-md-3', 'label' => 'Lunas', 'value' => $stats['paid']])
         @include('components.stat', ['wrap' => 'col-6 col-md-3', 'label' => 'Terkumpul', 'value' => $stats['collected'], 'rupiah' => true])
+        @include('components.stat', ['wrap' => 'col-6 col-md-3', 'label' => 'Pengeluaran', 'value' => $cash['expense'], 'rupiah' => true])
+        @include('components.stat', ['wrap' => 'col-6 col-md-3', 'label' => 'Saldo bersih', 'value' => $cash['balance'], 'rupiah' => true])
     </div>
 
     <div class="row g-3">

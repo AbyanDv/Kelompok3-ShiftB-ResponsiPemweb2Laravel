@@ -3,9 +3,11 @@
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\KasType\StoreKasTypeRequest;
+use App\Http\Requests\Ledger\StoreLedgerEntryRequest;
 use App\Http\Requests\Payment\ManualPaymentRequest;
 use App\Models\Bill;
 use App\Models\KasType;
+use App\Models\LedgerEntry;
 use App\Models\Payment;
 use App\Models\User;
 use App\Services\DiscordReminder;
@@ -63,6 +65,7 @@ Route::post('/daftar', function (RegisterRequest $request) {
 Route::get('/beranda', function (Request $request) {
     return view('beranda', [
         'stats' => Bill::summary() + ['members' => User::verifiedMember()->count()],
+        'cash' => LedgerEntry::summary(),
         'kasTypes' => KasType::active()->latest()->take(5)->get(),
         'recentBills' => Bill::with(['user', 'kasType'])->latest()->take(5)->get(),
         'myBills' => $request->user()
@@ -79,6 +82,7 @@ Route::get('/kas', function (Request $request) {
                 fn ($qq) => $qq->where('name', 'like', "%{$v}%")->orWhere('nim', 'like', "%{$v}%")))
             ->latest()->paginate(15)->withQueryString(),
         'summary' => Bill::summary(),
+        'cash' => LedgerEntry::summary(),
     ]);
 })->name('kas');
 
@@ -225,6 +229,19 @@ Route::middleware('auth')->group(function () use ($admin, $ownBill, $ownPayment)
 
             return back()->with($result['sent'] ? 'status' : 'warning', $result['message']);
         })->name('reminder');
+
+        Route::post('/ledger', function (StoreLedgerEntryRequest $request) use ($admin) {
+            $admin($request);
+
+            LedgerEntry::create([
+                ...$request->validated(),
+                'type' => 'expense',
+                'category' => 'pengeluaran',
+                'created_by' => $request->user()->id,
+            ]);
+
+            return back()->with('status', 'Pengeluaran dicatat.');
+        })->name('ledger.store');
     });
 
     Route::get('/admin', function (Request $request) use ($admin) {
@@ -239,6 +256,7 @@ Route::middleware('auth')->group(function () use ($admin, $ownBill, $ownPayment)
             'users' => User::latest()->paginate(15),
             'pendingUsers' => User::where('status', 'pending')->latest()->take(20)->get(),
             'kasTypes' => KasType::withCount('bills')->latest()->get(),
+            'recentExpenses' => LedgerEntry::where('type', 'expense')->orderByDesc('entry_date')->latest()->take(10)->get(),
         ]);
     })->name('admin');
 });

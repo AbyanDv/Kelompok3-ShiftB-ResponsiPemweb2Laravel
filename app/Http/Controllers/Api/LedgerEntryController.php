@@ -107,16 +107,15 @@ class LedgerEntryController extends Controller
 
     public function summary(): JsonResponse
     {
-        $income = (int) LedgerEntry::where('type', 'income')->sum('amount');
-        $expense = (int) LedgerEntry::where('type', 'expense')->sum('amount');
+        $s = LedgerEntry::summary();
 
         return response()->json([
             'success' => true,
             'message' => 'Ringkasan saldo.',
             'data' => [
-                'total_income' => $income,
-                'total_expense' => $expense,
-                'balance' => $income - $expense,
+                'total_income' => $s['income'],
+                'total_expense' => $s['expense'],
+                'balance' => $s['balance'],
             ],
         ]);
     }
