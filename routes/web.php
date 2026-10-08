@@ -151,6 +151,21 @@ Route::middleware('auth')->group(function () use ($admin, $ownBill, $ownPayment)
             return redirect()->route('bayar.show', $bill)->with('status', 'Tunai dicatat. Tagihan lunas.');
         })->name('bills.cash');
 
+        Route::post('/bills/{bill}/batal', function (Request $request, Bill $bill) use ($admin) {
+            $admin($request);
+
+            if ($bill->status === 'paid') {
+                return back()->withErrors(['bill' => 'Tagihan lunas tidak boleh dibatalkan.']);
+            }
+
+            DB::transaction(function () use ($bill) {
+                $bill->payments()->where('status', 'pending')->update(['status' => 'cancelled']);
+                $bill->update(['status' => 'cancelled']);
+            });
+
+            return back()->with('status', 'Tagihan dibatalkan.');
+        })->name('bills.cancel');
+
         Route::post('/users/{user}/verify', function (Request $request, User $user) use ($admin) {
             $admin($request);
             $user->update(['status' => 'verified']);

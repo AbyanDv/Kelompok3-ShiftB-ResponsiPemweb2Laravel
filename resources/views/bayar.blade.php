@@ -92,6 +92,10 @@
                             </div>
                             <button type="submit" class="btn btn-outline-dark btn-cta w-100">Tandai lunas tunai</button>
                         </form>
+                        <form method="POST" action="{{ route('admin.bills.cancel', $bill) }}" class="mt-2">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-danger btn-cta w-100" onclick="return confirm('Batalkan tagihan ini?')">Batalkan tagihan</button>
+                        </form>
                     </div>
                 </div>
             @endif
