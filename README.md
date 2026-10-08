@@ -1,58 +1,133 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Smart-Kas API
+> Sistem Manajemen Uang Kas & Iuran Berbasis API (Laravel 13)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📌 Informasi Kelompok
+- **Nomor Kelompok: 3** 
+- **Shift Praktikum: B** [
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 👥 Anggota Kelompok
 
-## Learning Laravel
+| No | Nama Lengkap | NIM | Shift Awal | Shift Akhir | Jobdesk / Kontribusi | Link Video Penjelasan |
+|---|---|---|---|---|---|---|
+| 1 | [Abyan Devadi] | [H1H024049] | [Shift Awal] | [Shift Akhir] | [Isi jobdesk: Backend kelontong] | [YouTube/Drive](https://...) |
+| 2 | [Muhammad Aziz Ihza Fahriza Salam] | [H1H024050] | [C] | [B] | [Isi jobdesk : Backend & Project Manager ] | [YouTube/Drive](https://...) |
+| 3 | [Khoirul Rosyid Gunawan] | [NIM] | [Shift Awal] | [Shift Akhir] | [Isi jobdesk: Frontend ] | [YouTube/Drive](https://...) |
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 📖 Deskripsi Aplikasi
+SmartKas adalah aplikasi berbasis REST API untuk mengelola uang kas/iuran secara terpusat dan transparan. Aplikasi ini dibuat untuk membantu bendahara dalam menagih, mencatat, dan memverifikasi pembayaran (termasuk pembayaran via QRIS), serta memberi anggota akses untuk melihat status tagihan dan catatan kas.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- **Target pengguna:** Ketua/Bendahara (Admin) dan anggota (Member) organisasi, kelas, atau komunitas.
+- **Problem yang diselesaikan:** pencatatan kas manual yang rawan salah, penagihan yang tidak terstruktur, dan kurangnya transparansi pemasukan serta pengeluaran kas.
 
-## Agentic Development
+---
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## ⚙️ Penjelasan Teknis
+
+### 1. Teknologi (Tech Stack)
+- **Backend:** Laravel 13 (PHP >= 8.3)
+- **Frontend:** TailWind CSS; diakses sebagai REST API (uji dengan Postman/Insomnia). Vite digunakan untuk build aset.
+- **Database:** MySQL 
+- **Library / Package:** Laravel Sanctum (autentikasi token), Composer, Node.js & npm (Vite)
+
+### 2. Fitur Utama & Modul
+- **Autentikasi & Otorisasi:** Login berbasis token (Laravel Sanctum) dengan pemisahan akses Admin (Ketua/Bendahara) dan Member. Login/registrasi menggunakan email sintetis `nim@smartkas.local`.
+- **Manajemen Anggota:** CRUD anggota dan verifikasi anggota oleh Admin (`status: verified`).
+- **Manajemen Tagihan (Bills):** Pembuatan paket iuran/kas (`KasTypes`) dan tagihan per anggota.
+- **Pembayaran (Payments):** Mendukung pembayaran via QRIS maupun Tunai.
+- **Buku Kas (Ledger):** Pencatatan otomatis pemasukan dan pengeluaran secara transparan (`LedgerEntries`).
+
+**Contoh endpoint:**
+
+| Method | Endpoint | Akses | Keterangan |
+|---|---|---|---|
+| POST | `/api/auth/register` | Publik | Pendaftaran anggota baru |
+| POST | `/api/auth/login` | Publik | Login untuk mendapatkan token akses |
+| GET | `/api/users` | Admin | Melihat daftar anggota |
+| PUT | `/api/users/{id}` | Admin | Memverifikasi anggota |
+
+**Roadmap:**
+- [x] Struktur database (Users, KasTypes, Bills, Payments, LedgerEntries)
+- [x] Autentikasi Sanctum & Role Management
+- [x] CRUD Anggota & Verifikasi
+- [ ] Integrasi Tagihan Otomatis
+- [ ] Integrasi Pembayaran QRIS & Webhook
+- [ ] Integrasi Notifikasi Discord
+
+### 3. Skema Data Singkat
+> Sesuaikan relasi di bawah ini dengan migrasi yang sebenarnya.
+
+- `users` (1 : N) `bills`
+- `kas_types` (1 : N) `bills`
+- `bills` (1 : N) `payments`
+- `payments` (1 : 1) `ledger_entries`
+
+---
+
+## 🚀 Panduan Instalasi Lokal
+
+**Prasyarat:** PHP >= 8.3, Composer, MySQL, Node.js & npm.
 
 ```bash
-composer require laravel/boost --dev
+# Clone repository
+git clone https://github.com/AbyanDv/SmartKas-Kelontong.git
+cd SmartKas-Kelontong
 
-php artisan boost:install
+# Install dependensi PHP & Node
+composer install
+npm install
+
+# Konfigurasi Environment
+cp .env.example .env
+php artisan key:generate
+
+# Konfigurasi database di file .env, lalu migrasi & seed
+php artisan migrate --seed
+
+# Jalankan development server
+php artisan serve
+npm run dev
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Contoh konfigurasi database di `.env`:
 
-## Contributing
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=smartkas
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 📬 Kontak & Lisensi
+- Abyan - [GitHub](https://github.com/AbyanDv)
+- Aziz - [GitHub](https://github.com/FahrizaSalam)
+- Rosyid - [GitHub](https://github.com/justdotzy69)
+- Project Link: [https://github.com/AbyanDv/SmartKas-Kelontong](https://github.com/AbyanDv/SmartKas-Kelontong)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Didistribusikan di bawah MIT License.
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+[contributors-shield]: https://img.shields.io/github/contributors/AbyanDv/SmartKas-Kelontong.svg?style=for-the-badge
+[contributors-url]: https://github.com/AbyanDv/SmartKas-Kelontong/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/AbyanDv/SmartKas-Kelontong.svg?style=for-the-badge
+[forks-url]: https://github.com/AbyanDv/SmartKas-Kelontong/network/members
+[stars-shield]: https://img.shields.io/github/stars/AbyanDv/SmartKas-Kelontong.svg?style=for-the-badge
+[stars-url]: https://github.com/AbyanDv/SmartKas-Kelontong/stargazers
+[issues-shield]: https://img.shields.io/github/issues/AbyanDv/SmartKas-Kelontong.svg?style=for-the-badge
+[issues-url]: https://github.com/AbyanDv/SmartKas-Kelontong/issues
+[license-shield]: https://img.shields.io/github/license/AbyanDv/SmartKas-Kelontong.svg?style=for-the-badge
+[license-url]: https://github.com/AbyanDv/SmartKas-Kelontong/blob/main/LICENSE
