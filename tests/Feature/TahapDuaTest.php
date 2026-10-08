@@ -179,9 +179,9 @@ class TahapDuaTest extends TestCase
         $kas = $this->paket($admin);
         Bill::create(['user_id' => $member->id, 'kas_type_id' => $kas->id, 'amount' => 10000]);
 
-        $this->actingAs($admin, 'sanctum')->postJson('/api/reminders')
-            ->assertStatus(422)
-            ->assertJsonPath('success', false);
+        $this->actingAs($admin)->post(route('admin.reminder'))
+            ->assertRedirect()
+            ->assertSessionHas('warning');
     }
 
     public function test_pengeluaran_dan_saldo(): void
@@ -249,8 +249,8 @@ class TahapDuaTest extends TestCase
         $kas = $this->paket($admin);
         Bill::create(['user_id' => $member->id, 'kas_type_id' => $kas->id, 'amount' => 10000]);
 
-        $this->actingAs($admin, 'sanctum')->postJson('/api/reminders')
-            ->assertStatus(422)
-            ->assertJsonPath('success', false);
+        $this->actingAs($admin)->post(route('admin.reminder'))
+            ->assertRedirect()
+            ->assertSessionHas('warning');
     }
 }

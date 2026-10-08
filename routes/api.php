@@ -5,7 +5,6 @@ use App\Http\Controllers\Api\BillController;
 use App\Http\Controllers\Api\KasTypeController;
 use App\Http\Controllers\Api\LedgerEntryController;
 use App\Http\Controllers\Api\PaymentController;
-use App\Http\Controllers\Api\ReminderController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -52,7 +51,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/ledger-entries', [LedgerEntryController::class, 'store']);
             Route::put('/ledger-entries/{ledgerEntry}', [LedgerEntryController::class, 'update']);
             Route::delete('/ledger-entries/{ledgerEntry}', [LedgerEntryController::class, 'destroy']);
-            Route::post('/reminders', [ReminderController::class, 'send']);
         });
     });
 });
