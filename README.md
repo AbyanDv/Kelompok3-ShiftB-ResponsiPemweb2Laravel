@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Smart-Kas API
 > Sistem Manajemen Uang Kas & Iuran Berbasis API (Laravel 13)
 
@@ -13,7 +13,6 @@
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 
-<<<<<<< HEAD
 ---
 
 ## 📌 Informasi Kelompok
