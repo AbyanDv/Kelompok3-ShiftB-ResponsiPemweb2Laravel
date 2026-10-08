@@ -22,8 +22,6 @@ Route::prefix('auth')->group(function () {
     });
 });
 
-Route::post('/webhooks/payment', [PaymentController::class, 'webhook']);
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('admin')->apiResource('users', UserController::class);
 

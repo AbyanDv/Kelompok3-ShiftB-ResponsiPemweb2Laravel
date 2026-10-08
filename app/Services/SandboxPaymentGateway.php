@@ -20,24 +20,4 @@ class SandboxPaymentGateway implements PaymentGateway
             'total_amount' => $bill->amount + $fee,
         ];
     }
-
-    public function signWebhook(array $payload): string
-    {
-        return hash_hmac('sha256', $this->message($payload), $this->secret());
-    }
-
-    public function verifyWebhook(array $payload, string $signature): bool
-    {
-        return hash_equals($this->signWebhook($payload), $signature);
-    }
-
-    private function message(array $payload): string
-    {
-        return ($payload['order_id'] ?? '').'|'.($payload['status'] ?? '').'|'.($payload['total_amount'] ?? '');
-    }
-
-    private function secret(): string
-    {
-        return (string) config('services.payment.secret', 'smartkas-mock-secret');
-    }
 }

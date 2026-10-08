@@ -29,7 +29,6 @@ return [
     ],
 
     'payment' => [
-        'secret' => env('PAYMENT_SECRET', 'smartkas-mock-secret'),
         'sandbox_expires' => env('PAYMENT_SANDBOX_EXPIRES', 30),
     ],
 

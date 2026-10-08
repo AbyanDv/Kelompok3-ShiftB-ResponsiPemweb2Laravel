@@ -6,7 +6,6 @@ use App\Models\Bill;
 use App\Models\LedgerEntry;
 use App\Models\Payment;
 use App\Models\User;
-use App\Services\SandboxPaymentGateway;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -140,38 +139,6 @@ class TahapDuaTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_webhook_valid_idempoten_dan_palsu_ditolak(): void
-    {
-        $admin = $this->admin();
-        $member = $this->member();
-        $kas = $this->paket($admin);
-        $bill = Bill::create(['user_id' => $member->id, 'kas_type_id' => $kas->id, 'amount' => 10000]);
-
-        $pay = $this->actingAs($member, 'sanctum')->postJson("/api/bills/{$bill->id}/payments")->assertCreated();
-        $orderId = $pay->json('data.order_id');
-        $total = $pay->json('data.total_amount');
-
-        $gateway = new SandboxPaymentGateway;
-        $payload = ['order_id' => $orderId, 'status' => 'paid', 'total_amount' => $total];
-        $sig = $gateway->signWebhook($payload);
-
-        $this->postJson('/api/webhooks/payment', $payload, ['X-Signature' => $sig])
-            ->assertOk()->assertJsonPath('data.status', 'paid');
-
-        // kirim ulang -> tetap satu pemasukan (idempoten)
-        $this->postJson('/api/webhooks/payment', $payload, ['X-Signature' => $sig])->assertOk();
-        $this->assertEquals(1, LedgerEntry::where('type', 'income')->count());
-
-        // signature palsu
-        $this->postJson('/api/webhooks/payment', $payload, ['X-Signature' => 'palsu'])
-            ->assertUnauthorized();
-
-        // nominal tidak cocok
-        $salah = ['order_id' => $orderId, 'status' => 'paid', 'total_amount' => 1];
-        $this->postJson('/api/webhooks/payment', $salah, ['X-Signature' => $gateway->signWebhook($salah)])
-            ->assertStatus(422);
-    }
-
     public function test_pengingat_tanpa_webhook_gagal_jelas(): void
     {
         $admin = $this->admin();
@@ -216,11 +183,6 @@ class TahapDuaTest extends TestCase
 
         $this->actingAs($admin, 'sanctum')->deleteJson("/api/bills/{$bill->id}")->assertOk();
         $this->assertEquals('cancelled', Payment::where('order_id', $orderId)->first()->status);
-
-        $gateway = new SandboxPaymentGateway;
-        $payload = ['order_id' => $orderId, 'status' => 'paid', 'total_amount' => $total];
-        $this->postJson('/api/webhooks/payment', $payload, ['X-Signature' => $gateway->signWebhook($payload)])
-            ->assertStatus(422);
 
         $this->assertEquals('cancelled', $bill->fresh()->status);
         $this->assertEquals(0, LedgerEntry::where('type', 'income')->count());
