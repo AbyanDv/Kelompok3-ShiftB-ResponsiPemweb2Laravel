@@ -21,7 +21,7 @@
 |---|---|---|---|---|---|---|
 | 1 | Abyan Devadi | H1H024049 | [Shift Awal] | [Shift Akhir] | Backend Kelontong | [YouTube](https://...) |
 | 2 | Muhammad Aziz Ihza Fahriza Salam | H1H024050 | C | B | Backend & Project Manager | [YouTube](https://youtu.be/FGMHCtKBf6E) |
-| 3 | Khoirul Rosyid Gunawan | H1H024036 | B | B | Business logic | [YouTube](https://...) |
+| 3 | Khoirul Rosyid Gunawan | H1H024036 | B | B | Business logic | [YouTube](https://https://youtu.be/4RPEsDzASHs) |
 
 ---
 
