@@ -19,7 +19,7 @@
 
 | No | Nama Lengkap | NIM | Shift Awal | Shift Akhir | Jobdesk / Kontribusi | Link Video Penjelasan |
 |---|---|---|---|---|---|---|
-| 1 | Abyan Devadi | H1H024049 | [Shift Awal] | [Shift Akhir] | Backend Kelontong | [YouTube](https://...) |
+| 1 | Abyan Devadi | H1H024049 | C | B | Backend Kelontong | [YouTube](https://youtu.be/ZIJl2TM1LjE) |
 | 2 | Muhammad Aziz Ihza Fahriza Salam | H1H024050 | C | B | Backend & Project Manager | [YouTube](https://youtu.be/FGMHCtKBf6E) |
 | 3 | Khoirul Rosyid Gunawan | H1H024036 | B | B | Business logic | [YouTube](https://https://youtu.be/4RPEsDzASHs) |
 
@@ -61,9 +61,9 @@ SmartKas adalah aplikasi berbasis REST API untuk mengelola uang kas/iuran secara
 - [x] Struktur database (Users, KasTypes, Bills, Payments, LedgerEntries)
 - [x] Autentikasi Sanctum & Role Management
 - [x] CRUD Anggota & Verifikasi
-- [ ] Integrasi Tagihan Otomatis
-- [ ] Integrasi Pembayaran QRIS & Webhook
-- [ ] Integrasi Notifikasi Discord
+- [x] Integrasi Tagihan Otomatis
+- [X] Integrasi Pembayaran QRIS & Webhook
+- [x] Integrasi Notifikasi Discord
 
 ### 3. Skema Data Singkat
 - `users` (1 : N) `bills`
